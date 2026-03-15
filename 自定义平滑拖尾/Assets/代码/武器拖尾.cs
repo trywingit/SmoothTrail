@@ -2,407 +2,407 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-public class ÎäÆ÷ÍÏÎ² : MonoBehaviour
+public class æ­¦å™¨æ‹–å°¾ : MonoBehaviour
 {
-    [Header("¶¨Î»µãÉèÖÃ")]
-    public Transform m_ÆğÊ¼µã;
-    public Transform m_½áÊøµã;
+    [Header("å®šä½ç‚¹è®¾ç½®")]
+    public Transform m_èµ·å§‹ç‚¹;
+    public Transform m_ç»“æŸç‚¹;
 
-    [Header("ÍÏÎ²Ğ§¹û²ÎÊı")]
-    public float m_ÍÏÎ²³ÖĞøÊ±¼ä = 0.3f;
-    public float m_¸üĞÂ¼ä¸ô = 0.02f;
-    public float m_×îĞ¡¾àÀë¼ä¸ô = 0.1f;
-    public Material m_ÍÏÎ²²ÄÖÊ;
+    [Header("æ‹–å°¾æ•ˆæœå‚æ•°")]
+    public float m_æ‹–å°¾æŒç»­æ—¶é—´ = 0.3f;
+    public float m_æ›´æ–°é—´éš” = 0.02f;
+    public float m_æœ€å°è·ç¦»é—´éš” = 0.1f;
+    public Material m_æ‹–å°¾æè´¨;
 
-    [Header("ÑÕÉ«½¥±ä")]
-    public Color m_ÆğÊ¼ÑÕÉ« = Color.white;
-    public Color m_½áÊøÑÕÉ« = new Color(1, 1, 1, 0);
+    [Header("é¢œè‰²æ¸å˜")]
+    public Color m_èµ·å§‹é¢œè‰² = Color.white;
+    public Color m_ç»“æŸé¢œè‰² = new Color(1, 1, 1, 0);
 
-    [Header("Catmull-Rom²åÖµÉèÖÃ")]
-    public bool m_ÆôÓÃ²åÖµ = true;
-    [Range(2, 10)] public int m_²åÖµ·Ö¶ÎÊı = 4;
-    public float m_²åÖµÕÅÁ¦ = 0.5f;
+    [Header("Catmull-Romæ’å€¼è®¾ç½®")]
+    public bool m_å¯ç”¨æ’å€¼ = true;
+    [Range(2, 10)] public int m_æ’å€¼åˆ†æ®µæ•° = 4;
+    public float m_æ’å€¼å¼ åŠ› = 0.5f;
 
-    // ÄÚ²¿±äÁ¿
-    private Mesh m_Íø¸ñ;
-    private MeshRenderer m_Íø¸ñäÖÈ¾Æ÷;
-    public List<ÍÏÎ²¶Î> m_ÍÏÎ²¶ÎÁĞ±í = new List<ÍÏÎ²¶Î>();
-    private float m_×îºó¸üĞÂÊ±¼ä;
-    public bool m_ÊÇ·ñ¼¤»îÍÏÎ² = false;
+    // å†…éƒ¨å˜é‡
+    private Mesh m_ç½‘æ ¼;
+    private MeshRenderer m_ç½‘æ ¼æ¸²æŸ“å™¨;
+    public List<æ‹–å°¾æ®µ> m_æ‹–å°¾æ®µåˆ—è¡¨ = new List<æ‹–å°¾æ®µ>();
+    private float m_æœ€åæ›´æ–°æ—¶é—´;
+    public bool m_æ˜¯å¦æ¿€æ´»æ‹–å°¾ = false;
 
-    // Î»ÖÃ¼ÇÂ¼
-    private Vector3 m_×îºóÆğÊ¼Î»ÖÃ;
-    private Vector3 m_×îºó½áÊøÎ»ÖÃ;
+    // ä½ç½®è®°å½•
+    private Vector3 m_æœ€åèµ·å§‹ä½ç½®;
+    private Vector3 m_æœ€åç»“æŸä½ç½®;
 
-    // ĞÔÄÜÓÅ»¯£º¶ÔÏó³Ø
-    private List<Vector3> m_¶¥µã³Ø = new List<Vector3>();
-    private List<Color> m_ÑÕÉ«³Ø = new List<Color>();
-    private List<Vector2> m_UV³Ø = new List<Vector2>();
-    private List<int> m_Èı½ÇĞÎ³Ø = new List<int>();
+    // æ€§èƒ½ä¼˜åŒ–ï¼šå¯¹è±¡æ± 
+    private List<Vector3> m_é¡¶ç‚¹æ±  = new List<Vector3>();
+    private List<Color> m_é¢œè‰²æ±  = new List<Color>();
+    private List<Vector2> m_UVæ±  = new List<Vector2>();
+    private List<int> m_ä¸‰è§’å½¢æ±  = new List<int>();
 
     [Serializable]
-    public class ÍÏÎ²¶Î
+    public class æ‹–å°¾æ®µ
     {
-        public Vector3 ÆğÊ¼Î»ÖÃ;
-        public Vector3 ½áÊøÎ»ÖÃ;
-        public float ´´½¨Ê±¼ä;
+        public Vector3 èµ·å§‹ä½ç½®;
+        public Vector3 ç»“æŸä½ç½®;
+        public float åˆ›å»ºæ—¶é—´;
 
-        public ÍÏÎ²¶Î(Vector3 tmp_ÆğÊ¼µã, Vector3 tmp_½áÊøµã, float tmp_Ê±¼ä)
+        public æ‹–å°¾æ®µ(Vector3 tmp_èµ·å§‹ç‚¹, Vector3 tmp_ç»“æŸç‚¹, float tmp_æ—¶é—´)
         {
-            ÆğÊ¼Î»ÖÃ = tmp_ÆğÊ¼µã;
-            ½áÊøÎ»ÖÃ = tmp_½áÊøµã;
-            ´´½¨Ê±¼ä = tmp_Ê±¼ä;
+            èµ·å§‹ä½ç½® = tmp_èµ·å§‹ç‚¹;
+            ç»“æŸä½ç½® = tmp_ç»“æŸç‚¹;
+            åˆ›å»ºæ—¶é—´ = tmp_æ—¶é—´;
         }
     }
 
     void Awake()
     {
-        ³õÊ¼»¯×é¼ş();
+        åˆå§‹åŒ–ç»„ä»¶();
     }
 
     private void Start()
     {
-        ¿ªÊ¼ÍÏÎ²();
+        å¼€å§‹æ‹–å°¾();
     }
 
-    void ³õÊ¼»¯×é¼ş()
+    void åˆå§‹åŒ–ç»„ä»¶()
     {
-        MeshFilter tmp_Íø¸ñ¹ıÂËÆ÷ = GetComponent<MeshFilter>();
-        if (tmp_Íø¸ñ¹ıÂËÆ÷ == null)
-            tmp_Íø¸ñ¹ıÂËÆ÷ = gameObject.AddComponent<MeshFilter>();
+        MeshFilter tmp_ç½‘æ ¼è¿‡æ»¤å™¨ = GetComponent<MeshFilter>();
+        if (tmp_ç½‘æ ¼è¿‡æ»¤å™¨ == null)
+            tmp_ç½‘æ ¼è¿‡æ»¤å™¨ = gameObject.AddComponent<MeshFilter>();
 
-        m_Íø¸ñäÖÈ¾Æ÷ = GetComponent<MeshRenderer>();
-        if (m_Íø¸ñäÖÈ¾Æ÷ == null)
-            m_Íø¸ñäÖÈ¾Æ÷ = gameObject.AddComponent<MeshRenderer>();
+        m_ç½‘æ ¼æ¸²æŸ“å™¨ = GetComponent<MeshRenderer>();
+        if (m_ç½‘æ ¼æ¸²æŸ“å™¨ == null)
+            m_ç½‘æ ¼æ¸²æŸ“å™¨ = gameObject.AddComponent<MeshRenderer>();
 
-        m_Íø¸ñ = new Mesh();
-        m_Íø¸ñ.name = "WeaponTrailMesh";
-        tmp_Íø¸ñ¹ıÂËÆ÷.mesh = m_Íø¸ñ;
+        m_ç½‘æ ¼ = new Mesh();
+        m_ç½‘æ ¼.name = "WeaponTrailMesh";
+        tmp_ç½‘æ ¼è¿‡æ»¤å™¨.mesh = m_ç½‘æ ¼;
 
-        if (m_ÍÏÎ²²ÄÖÊ != null)
-            m_Íø¸ñäÖÈ¾Æ÷.material = m_ÍÏÎ²²ÄÖÊ;
+        if (m_æ‹–å°¾æè´¨ != null)
+            m_ç½‘æ ¼æ¸²æŸ“å™¨.material = m_æ‹–å°¾æè´¨;
 
-        m_Íø¸ñäÖÈ¾Æ÷.enabled = false;
+        m_ç½‘æ ¼æ¸²æŸ“å™¨.enabled = false;
     }
 
     void Update()
     {
-        if (!m_ÊÇ·ñ¼¤»îÍÏÎ² || m_ÆğÊ¼µã == null || m_½áÊøµã == null)
+        if (!m_æ˜¯å¦æ¿€æ´»æ‹–å°¾ || m_èµ·å§‹ç‚¹ == null || m_ç»“æŸç‚¹ == null)
             return;
 
-        // ÓÅ»¯£ºÍ¬Ê±¼ì²éÊ±¼ä¼ä¸ôºÍ¾àÀë¼ä¸ô
-        bool tmp_ÊÇ·ñÓ¦¸Ã¸üĞÂ = (Time.time - m_×îºó¸üĞÂÊ±¼ä >= m_¸üĞÂ¼ä¸ô) &&
-                           (Vector3.Distance(m_ÆğÊ¼µã.position, m_×îºóÆğÊ¼Î»ÖÃ) > m_×îĞ¡¾àÀë¼ä¸ô ||
-                            Vector3.Distance(m_½áÊøµã.position, m_×îºó½áÊøÎ»ÖÃ) > m_×îĞ¡¾àÀë¼ä¸ô);
+        // ä¼˜åŒ–ï¼šåŒæ—¶æ£€æŸ¥æ—¶é—´é—´éš”å’Œè·ç¦»é—´éš”
+        bool tmp_æ˜¯å¦åº”è¯¥æ›´æ–° = (Time.time - m_æœ€åæ›´æ–°æ—¶é—´ >= m_æ›´æ–°é—´éš”) &&
+                           (Vector3.Distance(m_èµ·å§‹ç‚¹.position, m_æœ€åèµ·å§‹ä½ç½®) > m_æœ€å°è·ç¦»é—´éš” ||
+                            Vector3.Distance(m_ç»“æŸç‚¹.position, m_æœ€åç»“æŸä½ç½®) > m_æœ€å°è·ç¦»é—´éš”);
 
-        if (tmp_ÊÇ·ñÓ¦¸Ã¸üĞÂ)
+        if (tmp_æ˜¯å¦åº”è¯¥æ›´æ–°)
         {
-            Ìí¼ÓÍÏÎ²¶Î();
-            m_×îºó¸üĞÂÊ±¼ä = Time.time;
+            æ·»åŠ æ‹–å°¾æ®µ();
+            m_æœ€åæ›´æ–°æ—¶é—´ = Time.time;
 
-            // ¸üĞÂ¼ÇÂ¼µÄÎ»ÖÃ
-            m_×îºóÆğÊ¼Î»ÖÃ = m_ÆğÊ¼µã.position;
-            m_×îºó½áÊøÎ»ÖÃ = m_½áÊøµã.position;
+            // æ›´æ–°è®°å½•çš„ä½ç½®
+            m_æœ€åèµ·å§‹ä½ç½® = m_èµ·å§‹ç‚¹.position;
+            m_æœ€åç»“æŸä½ç½® = m_ç»“æŸç‚¹.position;
         }
 
-        ¸üĞÂÍø¸ñ();
-        ÇåÀí¹ıÆÚ¶Î();
+        æ›´æ–°ç½‘æ ¼();
+        æ¸…ç†è¿‡æœŸæ®µ();
     }
 
-    void Ìí¼ÓÍÏÎ²¶Î()
+    void æ·»åŠ æ‹–å°¾æ®µ()
     {
-        Vector3 tmp_µ±Ç°ÆğÊ¼µã = m_ÆğÊ¼µã.position;
-        Vector3 tmp_µ±Ç°½áÊøµã = m_½áÊøµã.position;
+        Vector3 tmp_å½“å‰èµ·å§‹ç‚¹ = m_èµ·å§‹ç‚¹.position;
+        Vector3 tmp_å½“å‰ç»“æŸç‚¹ = m_ç»“æŸç‚¹.position;
 
-        ÍÏÎ²¶Î tmp_ĞÂ¶Î = new ÍÏÎ²¶Î(tmp_µ±Ç°ÆğÊ¼µã, tmp_µ±Ç°½áÊøµã, Time.time);
-        m_ÍÏÎ²¶ÎÁĞ±í.Insert(0, tmp_ĞÂ¶Î);
+        æ‹–å°¾æ®µ tmp_æ–°æ®µ = new æ‹–å°¾æ®µ(tmp_å½“å‰èµ·å§‹ç‚¹, tmp_å½“å‰ç»“æŸç‚¹, Time.time);
+        m_æ‹–å°¾æ®µåˆ—è¡¨.Insert(0, tmp_æ–°æ®µ);
     }
 
-    void ¸üĞÂÍø¸ñ()
+    void æ›´æ–°ç½‘æ ¼()
     {
-        if (m_ÍÏÎ²¶ÎÁĞ±í.Count < 2)
+        if (m_æ‹–å°¾æ®µåˆ—è¡¨.Count < 2)
         {
-            m_Íø¸ñ.Clear();
+            m_ç½‘æ ¼.Clear();
             return;
         }
 
-        if (m_ÆôÓÃ²åÖµ && m_ÍÏÎ²¶ÎÁĞ±í.Count >= 2)
+        if (m_å¯ç”¨æ’å€¼ && m_æ‹–å°¾æ®µåˆ—è¡¨.Count >= 2)
         {
-            Éú³É²åÖµÍø¸ñ();
+            ç”Ÿæˆæ’å€¼ç½‘æ ¼();
         }
         else
         {
-            Éú³ÉÔ­Ê¼Íø¸ñ();
+            ç”ŸæˆåŸå§‹ç½‘æ ¼();
         }
     }
 
-    void Éú³ÉÔ­Ê¼Íø¸ñ()
+    void ç”ŸæˆåŸå§‹ç½‘æ ¼()
     {
-        int tmp_¶ÎÊıÁ¿ = m_ÍÏÎ²¶ÎÁĞ±í.Count;
-        int tmp_¶¥µãÊıÁ¿ = tmp_¶ÎÊıÁ¿ * 2;
+        int tmp_æ®µæ•°é‡ = m_æ‹–å°¾æ®µåˆ—è¡¨.Count;
+        int tmp_é¡¶ç‚¹æ•°é‡ = tmp_æ®µæ•°é‡ * 2;
 
-        // Ê¹ÓÃ¶ÔÏó³Ø±ÜÃâÆµ·±ÄÚ´æ·ÖÅä
-        È·±£ÁĞ±íÈİÁ¿(m_¶¥µã³Ø, tmp_¶¥µãÊıÁ¿);
-        È·±£ÁĞ±íÈİÁ¿(m_ÑÕÉ«³Ø, tmp_¶¥µãÊıÁ¿);
-        È·±£ÁĞ±íÈİÁ¿(m_UV³Ø, tmp_¶¥µãÊıÁ¿);
-        È·±£ÁĞ±íÈİÁ¿(m_Èı½ÇĞÎ³Ø, (tmp_¶ÎÊıÁ¿ - 1) * 6);
+        // ä½¿ç”¨å¯¹è±¡æ± é¿å…é¢‘ç¹å†…å­˜åˆ†é…
+        ç¡®ä¿åˆ—è¡¨å®¹é‡(m_é¡¶ç‚¹æ± , tmp_é¡¶ç‚¹æ•°é‡);
+        ç¡®ä¿åˆ—è¡¨å®¹é‡(m_é¢œè‰²æ± , tmp_é¡¶ç‚¹æ•°é‡);
+        ç¡®ä¿åˆ—è¡¨å®¹é‡(m_UVæ± , tmp_é¡¶ç‚¹æ•°é‡);
+        ç¡®ä¿åˆ—è¡¨å®¹é‡(m_ä¸‰è§’å½¢æ± , (tmp_æ®µæ•°é‡ - 1) * 6);
 
-        m_¶¥µã³Ø.Clear();
-        m_ÑÕÉ«³Ø.Clear();
-        m_UV³Ø.Clear();
-        m_Èı½ÇĞÎ³Ø.Clear();
+        m_é¡¶ç‚¹æ± .Clear();
+        m_é¢œè‰²æ± .Clear();
+        m_UVæ± .Clear();
+        m_ä¸‰è§’å½¢æ± .Clear();
 
-        for (int tmp_Ë÷Òı = 0; tmp_Ë÷Òı < tmp_¶ÎÊıÁ¿; tmp_Ë÷Òı++)
+        for (int tmp_ç´¢å¼• = 0; tmp_ç´¢å¼• < tmp_æ®µæ•°é‡; tmp_ç´¢å¼•++)
         {
-            ÍÏÎ²¶Î tmp_¶Î = m_ÍÏÎ²¶ÎÁĞ±í[tmp_Ë÷Òı];
-            float tmp_ÉúÃü±ÈÂÊ = (Time.time - tmp_¶Î.´´½¨Ê±¼ä) / m_ÍÏÎ²³ÖĞøÊ±¼ä;
-            float tmp_UÖµ = 1.0f - (float)tmp_Ë÷Òı / (tmp_¶ÎÊıÁ¿ - 1);
+            æ‹–å°¾æ®µ tmp_æ®µ = m_æ‹–å°¾æ®µåˆ—è¡¨[tmp_ç´¢å¼•];
+            float tmp_ç”Ÿå‘½æ¯”ç‡ = (Time.time - tmp_æ®µ.åˆ›å»ºæ—¶é—´) / m_æ‹–å°¾æŒç»­æ—¶é—´;
+            float tmp_Uå€¼ = 1.0f - (float)tmp_ç´¢å¼• / (tmp_æ®µæ•°é‡ - 1);
 
-            m_¶¥µã³Ø.Add(tmp_¶Î.ÆğÊ¼Î»ÖÃ);
-            m_¶¥µã³Ø.Add(tmp_¶Î.½áÊøÎ»ÖÃ);
+            m_é¡¶ç‚¹æ± .Add(tmp_æ®µ.èµ·å§‹ä½ç½®);
+            m_é¡¶ç‚¹æ± .Add(tmp_æ®µ.ç»“æŸä½ç½®);
 
-            Color tmp_¶ÎÑÕÉ« = Color.Lerp(m_ÆğÊ¼ÑÕÉ«, m_½áÊøÑÕÉ«, tmp_ÉúÃü±ÈÂÊ);
-            m_ÑÕÉ«³Ø.Add(tmp_¶ÎÑÕÉ«);
-            m_ÑÕÉ«³Ø.Add(tmp_¶ÎÑÕÉ«);
+            Color tmp_æ®µé¢œè‰² = Color.Lerp(m_èµ·å§‹é¢œè‰², m_ç»“æŸé¢œè‰², tmp_ç”Ÿå‘½æ¯”ç‡);
+            m_é¢œè‰²æ± .Add(tmp_æ®µé¢œè‰²);
+            m_é¢œè‰²æ± .Add(tmp_æ®µé¢œè‰²);
 
-            m_UV³Ø.Add(new Vector2(tmp_UÖµ, 0));
-            m_UV³Ø.Add(new Vector2(tmp_UÖµ, 1));
+            m_UVæ± .Add(new Vector2(tmp_Uå€¼, 0));
+            m_UVæ± .Add(new Vector2(tmp_Uå€¼, 1));
         }
 
-        for (int tmp_Ë÷Òı = 0; tmp_Ë÷Òı < tmp_¶ÎÊıÁ¿ - 1; tmp_Ë÷Òı++)
+        for (int tmp_ç´¢å¼• = 0; tmp_ç´¢å¼• < tmp_æ®µæ•°é‡ - 1; tmp_ç´¢å¼•++)
         {
-            int tmp_¶¥µãË÷Òı = tmp_Ë÷Òı * 2;
+            int tmp_é¡¶ç‚¹ç´¢å¼• = tmp_ç´¢å¼• * 2;
 
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı);
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 2);
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 1);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼•);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 2);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 1);
 
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 1);
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 2);
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 3);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 1);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 2);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 3);
         }
 
-        Ó¦ÓÃÍø¸ñÊı¾İ();
+        åº”ç”¨ç½‘æ ¼æ•°æ®();
     }
 
-    void Éú³É²åÖµÍø¸ñ()
+    void ç”Ÿæˆæ’å€¼ç½‘æ ¼()
     {
-        int tmp_Ô­Ê¼¶ÎÊıÁ¿ = m_ÍÏÎ²¶ÎÁĞ±í.Count;
+        int tmp_åŸå§‹æ®µæ•°é‡ = m_æ‹–å°¾æ®µåˆ—è¡¨.Count;
 
-        // ÌáÈ¡ÆğÊ¼µãºÍ½áÊøµãĞòÁĞ
-        Vector3[] tmp_ÆğÊ¼µãĞòÁĞ = new Vector3[tmp_Ô­Ê¼¶ÎÊıÁ¿];
-        Vector3[] tmp_½áÊøµãĞòÁĞ = new Vector3[tmp_Ô­Ê¼¶ÎÊıÁ¿];
-        float[] tmp_Ê±¼äĞòÁĞ = new float[tmp_Ô­Ê¼¶ÎÊıÁ¿];
+        // æå–èµ·å§‹ç‚¹å’Œç»“æŸç‚¹åºåˆ—
+        Vector3[] tmp_èµ·å§‹ç‚¹åºåˆ— = new Vector3[tmp_åŸå§‹æ®µæ•°é‡];
+        Vector3[] tmp_ç»“æŸç‚¹åºåˆ— = new Vector3[tmp_åŸå§‹æ®µæ•°é‡];
+        float[] tmp_æ—¶é—´åºåˆ— = new float[tmp_åŸå§‹æ®µæ•°é‡];
 
-        for (int tmp_Ë÷Òı = 0; tmp_Ë÷Òı < tmp_Ô­Ê¼¶ÎÊıÁ¿; tmp_Ë÷Òı++)
+        for (int tmp_ç´¢å¼• = 0; tmp_ç´¢å¼• < tmp_åŸå§‹æ®µæ•°é‡; tmp_ç´¢å¼•++)
         {
-            tmp_ÆğÊ¼µãĞòÁĞ[tmp_Ë÷Òı] = m_ÍÏÎ²¶ÎÁĞ±í[tmp_Ë÷Òı].ÆğÊ¼Î»ÖÃ;
-            tmp_½áÊøµãĞòÁĞ[tmp_Ë÷Òı] = m_ÍÏÎ²¶ÎÁĞ±í[tmp_Ë÷Òı].½áÊøÎ»ÖÃ;
-            tmp_Ê±¼äĞòÁĞ[tmp_Ë÷Òı] = m_ÍÏÎ²¶ÎÁĞ±í[tmp_Ë÷Òı].´´½¨Ê±¼ä;
+            tmp_èµ·å§‹ç‚¹åºåˆ—[tmp_ç´¢å¼•] = m_æ‹–å°¾æ®µåˆ—è¡¨[tmp_ç´¢å¼•].èµ·å§‹ä½ç½®;
+            tmp_ç»“æŸç‚¹åºåˆ—[tmp_ç´¢å¼•] = m_æ‹–å°¾æ®µåˆ—è¡¨[tmp_ç´¢å¼•].ç»“æŸä½ç½®;
+            tmp_æ—¶é—´åºåˆ—[tmp_ç´¢å¼•] = m_æ‹–å°¾æ®µåˆ—è¡¨[tmp_ç´¢å¼•].åˆ›å»ºæ—¶é—´;
         }
 
-        // Ó¦ÓÃCatmull-Rom²åÖµ[2](@ref)
-        List<Vector3> tmp_²åÖµÆğÊ¼µã = Ó¦ÓÃCatmullRom²åÖµ(tmp_ÆğÊ¼µãĞòÁĞ);
-        List<Vector3> tmp_²åÖµ½áÊøµã = Ó¦ÓÃCatmullRom²åÖµ(tmp_½áÊøµãĞòÁĞ);
-        List<float> tmp_²åÖµÊ±¼ä = Ó¦ÓÃCatmullRom²åÖµ(tmp_Ê±¼äĞòÁĞ);
+        // åº”ç”¨Catmull-Romæ’å€¼[2](@ref)
+        List<Vector3> tmp_æ’å€¼èµ·å§‹ç‚¹ = åº”ç”¨CatmullRomæ’å€¼(tmp_èµ·å§‹ç‚¹åºåˆ—);
+        List<Vector3> tmp_æ’å€¼ç»“æŸç‚¹ = åº”ç”¨CatmullRomæ’å€¼(tmp_ç»“æŸç‚¹åºåˆ—);
+        List<float> tmp_æ’å€¼æ—¶é—´ = åº”ç”¨CatmullRomæ’å€¼(tmp_æ—¶é—´åºåˆ—);
 
-        int tmp_²åÖµµãÊıÁ¿ = tmp_²åÖµÆğÊ¼µã.Count;
+        int tmp_æ’å€¼ç‚¹æ•°é‡ = tmp_æ’å€¼èµ·å§‹ç‚¹.Count;
 
-        // Ê¹ÓÃ¶ÔÏó³Ø×¼±¸Êı¾İ
-        int tmp_¶¥µãÊıÁ¿ = tmp_²åÖµµãÊıÁ¿ * 2;
-        È·±£ÁĞ±íÈİÁ¿(m_¶¥µã³Ø, tmp_¶¥µãÊıÁ¿);
-        È·±£ÁĞ±íÈİÁ¿(m_ÑÕÉ«³Ø, tmp_¶¥µãÊıÁ¿);
-        È·±£ÁĞ±íÈİÁ¿(m_UV³Ø, tmp_¶¥µãÊıÁ¿);
-        È·±£ÁĞ±íÈİÁ¿(m_Èı½ÇĞÎ³Ø, (tmp_²åÖµµãÊıÁ¿ - 1) * 6);
+        // ä½¿ç”¨å¯¹è±¡æ± å‡†å¤‡æ•°æ®
+        int tmp_é¡¶ç‚¹æ•°é‡ = tmp_æ’å€¼ç‚¹æ•°é‡ * 2;
+        ç¡®ä¿åˆ—è¡¨å®¹é‡(m_é¡¶ç‚¹æ± , tmp_é¡¶ç‚¹æ•°é‡);
+        ç¡®ä¿åˆ—è¡¨å®¹é‡(m_é¢œè‰²æ± , tmp_é¡¶ç‚¹æ•°é‡);
+        ç¡®ä¿åˆ—è¡¨å®¹é‡(m_UVæ± , tmp_é¡¶ç‚¹æ•°é‡);
+        ç¡®ä¿åˆ—è¡¨å®¹é‡(m_ä¸‰è§’å½¢æ± , (tmp_æ’å€¼ç‚¹æ•°é‡ - 1) * 6);
 
-        m_¶¥µã³Ø.Clear();
-        m_ÑÕÉ«³Ø.Clear();
-        m_UV³Ø.Clear();
-        m_Èı½ÇĞÎ³Ø.Clear();
+        m_é¡¶ç‚¹æ± .Clear();
+        m_é¢œè‰²æ± .Clear();
+        m_UVæ± .Clear();
+        m_ä¸‰è§’å½¢æ± .Clear();
 
-        for (int tmp_Ë÷Òı = 0; tmp_Ë÷Òı < tmp_²åÖµµãÊıÁ¿; tmp_Ë÷Òı++)
+        for (int tmp_ç´¢å¼• = 0; tmp_ç´¢å¼• < tmp_æ’å€¼ç‚¹æ•°é‡; tmp_ç´¢å¼•++)
         {
-            float tmp_ÉúÃü±ÈÂÊ = (Time.time - tmp_²åÖµÊ±¼ä[tmp_Ë÷Òı]) / m_ÍÏÎ²³ÖĞøÊ±¼ä;
-            float tmp_UÖµ = 1.0f - (float)tmp_Ë÷Òı / (tmp_²åÖµµãÊıÁ¿ - 1);
+            float tmp_ç”Ÿå‘½æ¯”ç‡ = (Time.time - tmp_æ’å€¼æ—¶é—´[tmp_ç´¢å¼•]) / m_æ‹–å°¾æŒç»­æ—¶é—´;
+            float tmp_Uå€¼ = 1.0f - (float)tmp_ç´¢å¼• / (tmp_æ’å€¼ç‚¹æ•°é‡ - 1);
 
-            m_¶¥µã³Ø.Add(tmp_²åÖµÆğÊ¼µã[tmp_Ë÷Òı]);
-            m_¶¥µã³Ø.Add(tmp_²åÖµ½áÊøµã[tmp_Ë÷Òı]);
+            m_é¡¶ç‚¹æ± .Add(tmp_æ’å€¼èµ·å§‹ç‚¹[tmp_ç´¢å¼•]);
+            m_é¡¶ç‚¹æ± .Add(tmp_æ’å€¼ç»“æŸç‚¹[tmp_ç´¢å¼•]);
 
-            Color tmp_¶ÎÑÕÉ« = Color.Lerp(m_ÆğÊ¼ÑÕÉ«, m_½áÊøÑÕÉ«, tmp_ÉúÃü±ÈÂÊ);
-            m_ÑÕÉ«³Ø.Add(tmp_¶ÎÑÕÉ«);
-            m_ÑÕÉ«³Ø.Add(tmp_¶ÎÑÕÉ«);
+            Color tmp_æ®µé¢œè‰² = Color.Lerp(m_èµ·å§‹é¢œè‰², m_ç»“æŸé¢œè‰², tmp_ç”Ÿå‘½æ¯”ç‡);
+            m_é¢œè‰²æ± .Add(tmp_æ®µé¢œè‰²);
+            m_é¢œè‰²æ± .Add(tmp_æ®µé¢œè‰²);
 
-            m_UV³Ø.Add(new Vector2(tmp_UÖµ, 0));
-            m_UV³Ø.Add(new Vector2(tmp_UÖµ, 1));
+            m_UVæ± .Add(new Vector2(tmp_Uå€¼, 0));
+            m_UVæ± .Add(new Vector2(tmp_Uå€¼, 1));
         }
 
-        for (int tmp_Ë÷Òı = 0; tmp_Ë÷Òı < tmp_²åÖµµãÊıÁ¿ - 1; tmp_Ë÷Òı++)
+        for (int tmp_ç´¢å¼• = 0; tmp_ç´¢å¼• < tmp_æ’å€¼ç‚¹æ•°é‡ - 1; tmp_ç´¢å¼•++)
         {
-            int tmp_¶¥µãË÷Òı = tmp_Ë÷Òı * 2;
+            int tmp_é¡¶ç‚¹ç´¢å¼• = tmp_ç´¢å¼• * 2;
 
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı);
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 2);
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 1);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼•);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 2);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 1);
 
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 1);
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 2);
-            m_Èı½ÇĞÎ³Ø.Add(tmp_¶¥µãË÷Òı + 3);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 1);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 2);
+            m_ä¸‰è§’å½¢æ± .Add(tmp_é¡¶ç‚¹ç´¢å¼• + 3);
         }
 
-        Ó¦ÓÃÍø¸ñÊı¾İ();
+        åº”ç”¨ç½‘æ ¼æ•°æ®();
     }
 
-    List<Vector3> Ó¦ÓÃCatmullRom²åÖµ(Vector3[] tmp_µãĞòÁĞ)
+    List<Vector3> åº”ç”¨CatmullRomæ’å€¼(Vector3[] tmp_ç‚¹åºåˆ—)
     {
-        List<Vector3> tmp_½á¹û = new List<Vector3>();
-        int tmp_µãÊıÁ¿ = tmp_µãĞòÁĞ.Length;
+        List<Vector3> tmp_ç»“æœ = new List<Vector3>();
+        int tmp_ç‚¹æ•°é‡ = tmp_ç‚¹åºåˆ—.Length;
 
-        if (tmp_µãÊıÁ¿ < 2) return tmp_½á¹û;
+        if (tmp_ç‚¹æ•°é‡ < 2) return tmp_ç»“æœ;
 
-        for (int tmp_Ë÷Òı = 0; tmp_Ë÷Òı < tmp_µãÊıÁ¿ - 1; tmp_Ë÷Òı++)
+        for (int tmp_ç´¢å¼• = 0; tmp_ç´¢å¼• < tmp_ç‚¹æ•°é‡ - 1; tmp_ç´¢å¼•++)
         {
-            // »ñÈ¡ËÄ¸ö¿ØÖÆµã[2](@ref)
-            Vector3 tmp_P0 = tmp_Ë÷Òı > 0 ? tmp_µãĞòÁĞ[tmp_Ë÷Òı - 1] : tmp_µãĞòÁĞ[0];
-            Vector3 tmp_P1 = tmp_µãĞòÁĞ[tmp_Ë÷Òı];
-            Vector3 tmp_P2 = tmp_µãĞòÁĞ[tmp_Ë÷Òı + 1];
-            Vector3 tmp_P3 = tmp_Ë÷Òı < tmp_µãÊıÁ¿ - 2 ? tmp_µãĞòÁĞ[tmp_Ë÷Òı + 2] : tmp_µãĞòÁĞ[tmp_µãÊıÁ¿ - 1];
+            // è·å–å››ä¸ªæ§åˆ¶ç‚¹[2](@ref)
+            Vector3 tmp_P0 = tmp_ç´¢å¼• > 0 ? tmp_ç‚¹åºåˆ—[tmp_ç´¢å¼• - 1] : tmp_ç‚¹åºåˆ—[0];
+            Vector3 tmp_P1 = tmp_ç‚¹åºåˆ—[tmp_ç´¢å¼•];
+            Vector3 tmp_P2 = tmp_ç‚¹åºåˆ—[tmp_ç´¢å¼• + 1];
+            Vector3 tmp_P3 = tmp_ç´¢å¼• < tmp_ç‚¹æ•°é‡ - 2 ? tmp_ç‚¹åºåˆ—[tmp_ç´¢å¼• + 2] : tmp_ç‚¹åºåˆ—[tmp_ç‚¹æ•°é‡ - 1];
 
-            // Ìí¼Óµ±Ç°µã
-            tmp_½á¹û.Add(tmp_P1);
+            // æ·»åŠ å½“å‰ç‚¹
+            tmp_ç»“æœ.Add(tmp_P1);
 
-            // ÔÚP1ºÍP2Ö®¼ä²åÈëµã[2](@ref)
-            for (int tmp_·Ö¶Î = 1; tmp_·Ö¶Î <= m_²åÖµ·Ö¶ÎÊı; tmp_·Ö¶Î++)
+            // åœ¨P1å’ŒP2ä¹‹é—´æ’å…¥ç‚¹[2](@ref)
+            for (int tmp_åˆ†æ®µ = 1; tmp_åˆ†æ®µ <= m_æ’å€¼åˆ†æ®µæ•°; tmp_åˆ†æ®µ++)
             {
-                float tmp_²åÖµ²ÎÊı = (float)tmp_·Ö¶Î / (m_²åÖµ·Ö¶ÎÊı + 1);
-                Vector3 tmp_²åÖµµã = ¼ÆËãCatmullRomµã(tmp_P0, tmp_P1, tmp_P2, tmp_P3, tmp_²åÖµ²ÎÊı);
-                tmp_½á¹û.Add(tmp_²åÖµµã);
+                float tmp_æ’å€¼å‚æ•° = (float)tmp_åˆ†æ®µ / (m_æ’å€¼åˆ†æ®µæ•° + 1);
+                Vector3 tmp_æ’å€¼ç‚¹ = è®¡ç®—CatmullRomç‚¹(tmp_P0, tmp_P1, tmp_P2, tmp_P3, tmp_æ’å€¼å‚æ•°);
+                tmp_ç»“æœ.Add(tmp_æ’å€¼ç‚¹);
             }
         }
 
-        // Ìí¼Ó×îºóÒ»¸öµã
-        tmp_½á¹û.Add(tmp_µãĞòÁĞ[tmp_µãÊıÁ¿ - 1]);
+        // æ·»åŠ æœ€åä¸€ä¸ªç‚¹
+        tmp_ç»“æœ.Add(tmp_ç‚¹åºåˆ—[tmp_ç‚¹æ•°é‡ - 1]);
 
-        return tmp_½á¹û;
+        return tmp_ç»“æœ;
     }
 
-    List<float> Ó¦ÓÃCatmullRom²åÖµ(float[] tmp_ÖµĞòÁĞ)
+    List<float> åº”ç”¨CatmullRomæ’å€¼(float[] tmp_å€¼åºåˆ—)
     {
-        List<float> tmp_½á¹û = new List<float>();
-        int tmp_ÊıÁ¿ = tmp_ÖµĞòÁĞ.Length;
+        List<float> tmp_ç»“æœ = new List<float>();
+        int tmp_æ•°é‡ = tmp_å€¼åºåˆ—.Length;
 
-        if (tmp_ÊıÁ¿ < 2) return tmp_½á¹û;
+        if (tmp_æ•°é‡ < 2) return tmp_ç»“æœ;
 
-        for (int tmp_Ë÷Òı = 0; tmp_Ë÷Òı < tmp_ÊıÁ¿ - 1; tmp_Ë÷Òı++)
+        for (int tmp_ç´¢å¼• = 0; tmp_ç´¢å¼• < tmp_æ•°é‡ - 1; tmp_ç´¢å¼•++)
         {
-            float tmp_P0 = tmp_Ë÷Òı > 0 ? tmp_ÖµĞòÁĞ[tmp_Ë÷Òı - 1] : tmp_ÖµĞòÁĞ[0];
-            float tmp_P1 = tmp_ÖµĞòÁĞ[tmp_Ë÷Òı];
-            float tmp_P2 = tmp_ÖµĞòÁĞ[tmp_Ë÷Òı + 1];
-            float tmp_P3 = tmp_Ë÷Òı < tmp_ÊıÁ¿ - 2 ? tmp_ÖµĞòÁĞ[tmp_Ë÷Òı + 2] : tmp_ÖµĞòÁĞ[tmp_ÊıÁ¿ - 1];
+            float tmp_P0 = tmp_ç´¢å¼• > 0 ? tmp_å€¼åºåˆ—[tmp_ç´¢å¼• - 1] : tmp_å€¼åºåˆ—[0];
+            float tmp_P1 = tmp_å€¼åºåˆ—[tmp_ç´¢å¼•];
+            float tmp_P2 = tmp_å€¼åºåˆ—[tmp_ç´¢å¼• + 1];
+            float tmp_P3 = tmp_ç´¢å¼• < tmp_æ•°é‡ - 2 ? tmp_å€¼åºåˆ—[tmp_ç´¢å¼• + 2] : tmp_å€¼åºåˆ—[tmp_æ•°é‡ - 1];
 
-            tmp_½á¹û.Add(tmp_P1);
+            tmp_ç»“æœ.Add(tmp_P1);
 
-            for (int tmp_·Ö¶Î = 1; tmp_·Ö¶Î <= m_²åÖµ·Ö¶ÎÊı; tmp_·Ö¶Î++)
+            for (int tmp_åˆ†æ®µ = 1; tmp_åˆ†æ®µ <= m_æ’å€¼åˆ†æ®µæ•°; tmp_åˆ†æ®µ++)
             {
-                float tmp_²åÖµ²ÎÊı = (float)tmp_·Ö¶Î / (m_²åÖµ·Ö¶ÎÊı + 1);
-                float tmp_²åÖµµã = ¼ÆËãCatmullRomµã(tmp_P0, tmp_P1, tmp_P2, tmp_P3, tmp_²åÖµ²ÎÊı);
-                tmp_½á¹û.Add(tmp_²åÖµµã);
+                float tmp_æ’å€¼å‚æ•° = (float)tmp_åˆ†æ®µ / (m_æ’å€¼åˆ†æ®µæ•° + 1);
+                float tmp_æ’å€¼ç‚¹ = è®¡ç®—CatmullRomç‚¹(tmp_P0, tmp_P1, tmp_P2, tmp_P3, tmp_æ’å€¼å‚æ•°);
+                tmp_ç»“æœ.Add(tmp_æ’å€¼ç‚¹);
             }
         }
 
-        tmp_½á¹û.Add(tmp_ÖµĞòÁĞ[tmp_ÊıÁ¿ - 1]);
-        return tmp_½á¹û;
+        tmp_ç»“æœ.Add(tmp_å€¼åºåˆ—[tmp_æ•°é‡ - 1]);
+        return tmp_ç»“æœ;
     }
 
-    Vector3 ¼ÆËãCatmullRomµã(Vector3 tmp_P0, Vector3 tmp_P1, Vector3 tmp_P2, Vector3 tmp_P3, float tmp_²åÖµ²ÎÊı)
+    Vector3 è®¡ç®—CatmullRomç‚¹(Vector3 tmp_P0, Vector3 tmp_P1, Vector3 tmp_P2, Vector3 tmp_P3, float tmp_æ’å€¼å‚æ•°)
     {
-        // Catmull-RomÑùÌõ²åÖµ¹«Ê½[2](@ref)
-        float tmp_²ÎÊıÆ½·½ = tmp_²åÖµ²ÎÊı * tmp_²åÖµ²ÎÊı;
-        float tmp_²ÎÊıÁ¢·½ = tmp_²ÎÊıÆ½·½ * tmp_²åÖµ²ÎÊı;
+        // Catmull-Romæ ·æ¡æ’å€¼å…¬å¼[2](@ref)
+        float tmp_å‚æ•°å¹³æ–¹ = tmp_æ’å€¼å‚æ•° * tmp_æ’å€¼å‚æ•°;
+        float tmp_å‚æ•°ç«‹æ–¹ = tmp_å‚æ•°å¹³æ–¹ * tmp_æ’å€¼å‚æ•°;
 
         return 0.5f * (
             (2f * tmp_P1) +
-            (-tmp_P0 + tmp_P2) * tmp_²åÖµ²ÎÊı +
-            (2f * tmp_P0 - 5f * tmp_P1 + 4f * tmp_P2 - tmp_P3) * tmp_²ÎÊıÆ½·½ +
-            (-tmp_P0 + 3f * tmp_P1 - 3f * tmp_P2 + tmp_P3) * tmp_²ÎÊıÁ¢·½
+            (-tmp_P0 + tmp_P2) * tmp_æ’å€¼å‚æ•° +
+            (2f * tmp_P0 - 5f * tmp_P1 + 4f * tmp_P2 - tmp_P3) * tmp_å‚æ•°å¹³æ–¹ +
+            (-tmp_P0 + 3f * tmp_P1 - 3f * tmp_P2 + tmp_P3) * tmp_å‚æ•°ç«‹æ–¹
         );
     }
 
-    float ¼ÆËãCatmullRomµã(float tmp_P0, float tmp_P1, float tmp_P2, float tmp_P3, float tmp_²åÖµ²ÎÊı)
+    float è®¡ç®—CatmullRomç‚¹(float tmp_P0, float tmp_P1, float tmp_P2, float tmp_P3, float tmp_æ’å€¼å‚æ•°)
     {
-        float tmp_²ÎÊıÆ½·½ = tmp_²åÖµ²ÎÊı * tmp_²åÖµ²ÎÊı;
-        float tmp_²ÎÊıÁ¢·½ = tmp_²ÎÊıÆ½·½ * tmp_²åÖµ²ÎÊı;
+        float tmp_å‚æ•°å¹³æ–¹ = tmp_æ’å€¼å‚æ•° * tmp_æ’å€¼å‚æ•°;
+        float tmp_å‚æ•°ç«‹æ–¹ = tmp_å‚æ•°å¹³æ–¹ * tmp_æ’å€¼å‚æ•°;
 
         return 0.5f * (
             (2f * tmp_P1) +
-            (-tmp_P0 + tmp_P2) * tmp_²åÖµ²ÎÊı +
-            (2f * tmp_P0 - 5f * tmp_P1 + 4f * tmp_P2 - tmp_P3) * tmp_²ÎÊıÆ½·½ +
-            (-tmp_P0 + 3f * tmp_P1 - 3f * tmp_P2 + tmp_P3) * tmp_²ÎÊıÁ¢·½
+            (-tmp_P0 + tmp_P2) * tmp_æ’å€¼å‚æ•° +
+            (2f * tmp_P0 - 5f * tmp_P1 + 4f * tmp_P2 - tmp_P3) * tmp_å‚æ•°å¹³æ–¹ +
+            (-tmp_P0 + 3f * tmp_P1 - 3f * tmp_P2 + tmp_P3) * tmp_å‚æ•°ç«‹æ–¹
         );
     }
 
-    void Ó¦ÓÃÍø¸ñÊı¾İ()
+    void åº”ç”¨ç½‘æ ¼æ•°æ®()
     {
-        m_Íø¸ñ.Clear();
-        m_Íø¸ñ.vertices = m_¶¥µã³Ø.ToArray();
-        m_Íø¸ñ.colors = m_ÑÕÉ«³Ø.ToArray();
-        m_Íø¸ñ.uv = m_UV³Ø.ToArray();
-        m_Íø¸ñ.triangles = m_Èı½ÇĞÎ³Ø.ToArray();
-        m_Íø¸ñ.RecalculateNormals();
-        m_Íø¸ñ.RecalculateBounds();
+        m_ç½‘æ ¼.Clear();
+        m_ç½‘æ ¼.vertices = m_é¡¶ç‚¹æ± .ToArray();
+        m_ç½‘æ ¼.colors = m_é¢œè‰²æ± .ToArray();
+        m_ç½‘æ ¼.uv = m_UVæ± .ToArray();
+        m_ç½‘æ ¼.triangles = m_ä¸‰è§’å½¢æ± .ToArray();
+        m_ç½‘æ ¼.RecalculateNormals();
+        m_ç½‘æ ¼.RecalculateBounds();
     }
 
-    void È·±£ÁĞ±íÈİÁ¿<T>(List<T> tmp_ÁĞ±í, int tmp_ËùĞèÈİÁ¿)
+    void ç¡®ä¿åˆ—è¡¨å®¹é‡<T>(List<T> tmp_åˆ—è¡¨, int tmp_æ‰€éœ€å®¹é‡)
     {
-        if (tmp_ÁĞ±í.Capacity < tmp_ËùĞèÈİÁ¿)
+        if (tmp_åˆ—è¡¨.Capacity < tmp_æ‰€éœ€å®¹é‡)
         {
-            tmp_ÁĞ±í.Capacity = Mathf.NextPowerOfTwo(tmp_ËùĞèÈİÁ¿);
+            tmp_åˆ—è¡¨.Capacity = Mathf.NextPowerOfTwo(tmp_æ‰€éœ€å®¹é‡);
         }
     }
 
-    void ÇåÀí¹ıÆÚ¶Î()
+    void æ¸…ç†è¿‡æœŸæ®µ()
     {
-        float tmp_µ±Ç°Ê±¼ä = Time.time;
-        for (int tmp_Ë÷Òı = m_ÍÏÎ²¶ÎÁĞ±í.Count - 1; tmp_Ë÷Òı >= 0; tmp_Ë÷Òı--)
+        float tmp_å½“å‰æ—¶é—´ = Time.time;
+        for (int tmp_ç´¢å¼• = m_æ‹–å°¾æ®µåˆ—è¡¨.Count - 1; tmp_ç´¢å¼• >= 0; tmp_ç´¢å¼•--)
         {
-            if (tmp_µ±Ç°Ê±¼ä - m_ÍÏÎ²¶ÎÁĞ±í[tmp_Ë÷Òı].´´½¨Ê±¼ä > m_ÍÏÎ²³ÖĞøÊ±¼ä)
+            if (tmp_å½“å‰æ—¶é—´ - m_æ‹–å°¾æ®µåˆ—è¡¨[tmp_ç´¢å¼•].åˆ›å»ºæ—¶é—´ > m_æ‹–å°¾æŒç»­æ—¶é—´)
             {
-                m_ÍÏÎ²¶ÎÁĞ±í.RemoveAt(tmp_Ë÷Òı);
+                m_æ‹–å°¾æ®µåˆ—è¡¨.RemoveAt(tmp_ç´¢å¼•);
             }
         }
     }
 
-    public void ¿ªÊ¼ÍÏÎ²()
+    public void å¼€å§‹æ‹–å°¾()
     {
-        if (m_ÆğÊ¼µã == null || m_½áÊøµã == null)
+        if (m_èµ·å§‹ç‚¹ == null || m_ç»“æŸç‚¹ == null)
         {
-            Debug.LogError("WeaponTrailRenderer: ÆğÊ¼µã»ò½áÊøµãÎ´·ÖÅä!");
+            Debug.LogError("WeaponTrailRenderer: èµ·å§‹ç‚¹æˆ–ç»“æŸç‚¹æœªåˆ†é…!");
             return;
         }
 
-        m_ÊÇ·ñ¼¤»îÍÏÎ² = true;
-        m_ÍÏÎ²¶ÎÁĞ±í.Clear();
-        m_×îºó¸üĞÂÊ±¼ä = Time.time;
+        m_æ˜¯å¦æ¿€æ´»æ‹–å°¾ = true;
+        m_æ‹–å°¾æ®µåˆ—è¡¨.Clear();
+        m_æœ€åæ›´æ–°æ—¶é—´ = Time.time;
 
-        // ³õÊ¼»¯¼ÇÂ¼µÄÎ»ÖÃ
-        m_×îºóÆğÊ¼Î»ÖÃ = m_ÆğÊ¼µã.position;
-        m_×îºó½áÊøÎ»ÖÃ = m_½áÊøµã.position;
+        // åˆå§‹åŒ–è®°å½•çš„ä½ç½®
+        m_æœ€åèµ·å§‹ä½ç½® = m_èµ·å§‹ç‚¹.position;
+        m_æœ€åç»“æŸä½ç½® = m_ç»“æŸç‚¹.position;
 
-        if (m_Íø¸ñäÖÈ¾Æ÷ != null)
-            m_Íø¸ñäÖÈ¾Æ÷.enabled = true;
+        if (m_ç½‘æ ¼æ¸²æŸ“å™¨ != null)
+            m_ç½‘æ ¼æ¸²æŸ“å™¨.enabled = true;
     }
 
-    public void Í£Ö¹ÍÏÎ²()
+    public void åœæ­¢æ‹–å°¾()
     {
-        m_ÊÇ·ñ¼¤»îÍÏÎ² = false;
+        m_æ˜¯å¦æ¿€æ´»æ‹–å°¾ = false;
     }
 
-    public void Á¢¼´ÇåÀíÍÏÎ²()
+    public void ç«‹å³æ¸…ç†æ‹–å°¾()
     {
-        m_ÊÇ·ñ¼¤»îÍÏÎ² = false;
-        m_ÍÏÎ²¶ÎÁĞ±í.Clear();
-        if (m_Íø¸ñ != null)
-            m_Íø¸ñ.Clear();
-        if (m_Íø¸ñäÖÈ¾Æ÷ != null)
-            m_Íø¸ñäÖÈ¾Æ÷.enabled = false;
+        m_æ˜¯å¦æ¿€æ´»æ‹–å°¾ = false;
+        m_æ‹–å°¾æ®µåˆ—è¡¨.Clear();
+        if (m_ç½‘æ ¼ != null)
+            m_ç½‘æ ¼.Clear();
+        if (m_ç½‘æ ¼æ¸²æŸ“å™¨ != null)
+            m_ç½‘æ ¼æ¸²æŸ“å™¨.enabled = false;
     }
 }
